@@ -1,0 +1,36 @@
+1)The total revenue generated from all flight
+SELECT 
+    SUM(BaseFare + GovernmentTaxes + TaxesFeesCharges - Discount - AncillaryRevenue) AS TotalRevenue
+FROM 
+    ReservationFinanceFact;
+2)Average Revenue per Flight:
+SELECT 
+    AVG(BaseFare + GovernmentTaxes + TaxesFeesCharges - Discount - AncillaryRevenue) AS AvgRevenuePerFlight
+FROM 
+    ReservationFinanceFact;
+
+3) Cancellation Rate:
+
+SELECT 
+    (COUNT(CancellationKey) / COUNT(*)) * 100 AS CancellationRate
+FROM 
+    FlightFact;
+4) Revenue Contribution by Aircraft Type:
+SELECT 
+    A.AircraftType,
+    (SUM(R.BaseFare) / (SELECT SUM(BaseFare) FROM ReservationFinanceFact)) * 100 AS RevenueContributionPercentage
+FROM 
+    ReservationFinanceFact R
+INNER JOIN 
+    Aircraft A ON R.AircraftKey = A.AircraftKey
+GROUP BY 
+    A.AircraftType
+ORDER BY 
+    RevenueContributionPercentage DESC;
+5) Average Fuel Consumption per Flight:
+SELECT 
+    AVG(FuelConsumption) AS AvgFuelConsumptionPerFlight
+FROM 
+    FlightFact;
+
+

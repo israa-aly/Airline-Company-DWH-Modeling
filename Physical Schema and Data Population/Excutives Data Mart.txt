@@ -1,0 +1,119 @@
+CREATE TABLE Location (
+    LocationKey NUMBER PRIMARY KEY,
+    City VARCHAR2(100),
+    Country VARCHAR2(100),
+    Latitude DECIMAL(9, 6),
+    Longitude DECIMAL(9, 6),
+    Timezone VARCHAR2(50)
+);
+
+CREATE TABLE Airport (
+    AirportKey NUMBER PRIMARY KEY,
+    AirportID VARCHAR2(10),
+    AirportName VARCHAR2(255),
+    LocationKey NUMBER,
+    FOREIGN KEY (LocationKey) REFERENCES Location(LocationKey)
+);
+
+CREATE TABLE TimeTable (
+    TimeKey NUMBER PRIMARY KEY,
+    Hour NUMBER,
+    Minutes NUMBER,
+    Seconds NUMBER
+);
+
+CREATE TABLE FlightCancellationReason (
+    CancellationKey NUMBER PRIMARY KEY,
+    CancellationID NUMBER ,
+    CancellationReason VARCHAR2(255),
+    CancellationTimestamp TIMESTAMP
+);
+
+CREATE TABLE FlightFact (
+    FlightNumber VARCHAR2(20)  PRIMARY KEY,
+    OriginAirportKey NUMBER,
+    DestinationAirportKey NUMBER,
+    AircraftKey NUMBER,
+    ScheduledDepartureDateKey NUMBER,
+    ScheduledDepartureTimeKey NUMBER,
+    ActualDepartureDateKey NUMBER,
+    ActualDepartureTimeKey NUMBER,
+    CancellationKey NUMBER,
+    NumOfPassengers NUMBER,
+    LoadFactor DECIMAL(5, 2),
+    Duration NUMBER,
+    DistanceFlown NUMBER,
+    FuelConsumption NUMBER,
+    FreightWeight NUMBER,
+
+    FOREIGN KEY (OriginAirportKey) REFERENCES Airport(AirportKey),
+    FOREIGN KEY (DestinationAirportKey) REFERENCES Airport(AirportKey),
+    FOREIGN KEY (AircraftKey) REFERENCES Aircraft(AircraftKey),
+    FOREIGN KEY (ScheduledDepartureDateKey) REFERENCES DateTable(DateKey),
+    FOREIGN KEY (ScheduledDepartureTimeKey) REFERENCES TimeTable(TimeKey),
+    FOREIGN KEY (ActualDepartureDateKey) REFERENCES DateTable(DateKey),
+    FOREIGN KEY (ActualDepartureTimeKey) REFERENCES TimeTable(TimeKey),
+    FOREIGN KEY (CancellationKey) REFERENCES FlightCancellationReason(CancellationKey)
+);
+
+
+-- Inserting data into the FlightCancellationReason table
+INSERT INTO FlightCancellationReason 
+VALUES (1,20, 'Bad weather conditions', TIMESTAMP '2024-04-05 10:00:00');
+
+INSERT INTO FlightCancellationReason
+VALUES (2,22, 'Technical issues with the aircraft', TIMESTAMP '2024-04-10 15:00:00');
+
+INSERT INTO FlightCancellationReason
+VALUES (3,23, 'Air traffic control restrictions', TIMESTAMP '2024-04-15 13:30:00');
+
+-- Inserting data into the time table
+INSERT INTO TimeTable (TimeKey, Hour, Minutes, Seconds)
+SELECT
+    (t1.hour * 60 * 60 + t2.minutes * 60 + t3.seconds) AS TimeKey,
+    t1.hour AS Hour,
+    t2.minutes AS Minutes,
+    t3.seconds AS Seconds
+FROM
+    (SELECT LEVEL - 1 AS hour FROM DUAL CONNECT BY LEVEL <= 24) t1
+CROSS JOIN
+    (SELECT LEVEL - 1 AS minutes FROM DUAL CONNECT BY LEVEL <= 60) t2
+CROSS JOIN
+    (SELECT LEVEL - 1 AS seconds FROM DUAL CONNECT BY LEVEL <= 60) t3;
+    
+-- Inserting data into the Location table
+INSERT INTO Location (LocationKey, City, Country, Latitude, Longitude, Timezone)
+VALUES (1, 'New York', 'USA', 40.7128, -74.0060, 'America/New_York');
+
+INSERT INTO Location (LocationKey, City, Country, Latitude, Longitude, Timezone)
+VALUES (2, 'Los Angeles', 'USA', 34.0522, -118.2437, 'America/Los_Angeles');
+
+INSERT INTO Location (LocationKey, City, Country, Latitude, Longitude, Timezone)
+VALUES (3, 'London', 'UK', 51.5074, -0.1278, 'Europe/London');
+
+INSERT INTO Location (LocationKey, City, Country, Latitude, Longitude, Timezone)
+VALUES (4, 'Paris', 'France', 48.8566, 2.3522, 'Europe/Paris');
+
+
+-- Inserting data into the Airport table
+INSERT INTO Airport (AirportKey, AirportID, AirportName, LocationKey)
+VALUES (1, 'JFK', 'John F. Kennedy International Airport', 1);
+
+INSERT INTO Airport (AirportKey, AirportID, AirportName, LocationKey)
+VALUES (2, 'LAX', 'Los Angeles International Airport', 2);
+
+INSERT INTO Airport (AirportKey, AirportID, AirportName, LocationKey)
+VALUES (3, 'LHR', 'Heathrow Airport', 3);
+
+INSERT INTO Airport (AirportKey, AirportID, AirportName, LocationKey)
+VALUES (4, 'CDG', 'Charles de Gaulle Airport', 4);
+
+-- Inserting data into flight fact table
+INSERT INTO FlightFact (FlightNumber, OriginAirportKey, DestinationAirportKey, AircraftKey, ScheduledDepartureDateKey, ScheduledDepartureTimeKey, ActualDepartureDateKey, ActualDepartureTimeKey, CancellationKey, NumOfPassengers, LoadFactor, Duration, DistanceFlown, FuelConsumption, FreightWeight)
+VALUES ('FL123', 1, 2, 1, 1, 1, 1, 1, NULL, 150, 0.75, 180, 2500, 1500, 300);
+
+INSERT INTO FlightFact (FlightNumber, OriginAirportKey, DestinationAirportKey, AircraftKey, ScheduledDepartureDateKey, ScheduledDepartureTimeKey, ActualDepartureDateKey, ActualDepartureTimeKey, CancellationKey, NumOfPassengers, LoadFactor, Duration, DistanceFlown, FuelConsumption, FreightWeight)
+VALUES ('FL456', 2, 1, 2, 2, 2, 2, 2, NULL, 120, 0.65, 150, 2200, 1300, 200);
+
+
+

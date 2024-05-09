@@ -1,0 +1,83 @@
+1) Revenue by Month and Year:
+SELECT 
+    TO_CHAR(D.DateValue, 'YYYY-MM') AS YearMonth,
+    SUM(R.BaseFare) AS TotalRevenue
+FROM 
+    ReservationFinanceFact R
+INNER JOIN 
+    DateTable D ON R.DateKey = D.DateKey
+GROUP BY 
+    TO_CHAR(D.DateValue, 'YYYY-MM')
+ORDER BY 
+    TO_CHAR(D.DateValue, 'YYYY-MM');
+
+2) Profit Margin by Flight:
+SELECT 
+    F.FlightNumber,
+    (SUM(R.Revenue) - SUM(R.AncillaryRevenue)) / SUM(R.Revenue) AS ProfitMargin
+FROM 
+    ReservationFinanceFact R
+INNER JOIN 
+    Flight F ON R.FlightKey = F.FlightKey
+GROUP BY 
+    F.FlightNumber
+ORDER BY 
+    ProfitMargin DESC;
+
+3) Top 10 Revenue Generating Passengers:
+SELECT PassengerName, TotalRevenue
+FROM (
+    SELECT 
+        P.PassengerName,
+        SUM(R.BaseFare) AS TotalRevenue
+    FROM 
+        ReservationFinanceFact R
+    INNER JOIN 
+        Passenger P ON R.PassengerKey = P.PassengerKey
+    GROUP BY 
+        P.PassengerName
+    ORDER BY 
+        TotalRevenue DESC
+) 
+WHERE ROWNUM <= 10;
+
+4)Revenue Trend by Fare Basis Type:
+SELECT 
+    FB.FareBasisCode,
+    TO_CHAR(D.DateValue, 'YYYY-MM') AS YearMonth,
+    SUM(R.BaseFare) AS TotalRevenue
+FROM 
+    ReservationFinanceFact R
+INNER JOIN 
+    DateTable D ON R.DateKey = D.DateKey
+INNER JOIN 
+    FareBasis FB ON R.FareBasisKey = FB.FareBasisKey
+GROUP BY 
+    FB.FareBasisCode, TO_CHAR(D.DateValue, 'YYYY-MM')
+ORDER BY 
+    FB.FareBasisCode, TO_CHAR(D.DateValue, 'YYYY-MM');
+5) Total Revenue and Profit by Promotion:
+SELECT 
+    P.PromotionDescription,
+    SUM(R.Revenue) AS TotalRevenue,
+    SUM(R.Profit) AS TotalProfit
+FROM 
+    ReservationFinanceFact R
+INNER JOIN 
+    Promotion P ON R.PromotionKey = P.PromotionKey
+GROUP BY 
+    P.PromotionDescription
+ORDER BY 
+    TotalRevenue DESC;
+6) Revenue Loss due to Cancellations:
+SELECT 
+    SUM(CASE WHEN R.CancellationKey IS NOT NULL THEN R.BaseFare ELSE 0 END) AS RevenueLossDueToCancellations
+FROM 
+    ReservationFinanceFact R;
+7) Ancillary Revenue Contribution:
+SELECT 
+    (SUM(AncillaryRevenue) / SUM(BaseFare + GovernmentTaxes + TaxesFeesCharges - Discount)) * 100 AS AncillaryRevenueContribution
+FROM 
+    ReservationFinanceFact;
+
+

@@ -1,0 +1,38 @@
+--Query 1: Analyzing Flights Taken by Frequent Flyers
+--This query retrieves flights taken by frequent flyers along with their associated details.
+
+SELECT p.PassengerName, f.FlightNumber, f.DepartureAirport, f.ArrivalAirport, f.DepartureTime, f.ArrivalTime
+FROM PassengerMilesFact pmf
+JOIN PassengerProfileDim ppd ON pmf.PassengerProfileKey = ppd.PassengerProfileKey
+JOIN Passenger p ON pmf.PassengerKey = p.PassengerKey
+JOIN Flight f ON pmf.FlightKey = f.FlightKey;
+
+
+--Query 2: Examining Fare Basis and Upgrade Frequency
+--This query analyzes fare basis, upgrade frequency, and related details for frequent flyers.
+
+
+SELECT p.PassengerName, fb.FareBasisCode, pmf.MilesEarned, pmf.MilesFlown
+FROM PassengerMilesFact pmf
+JOIN PassengerProfileDim ppd ON pmf.PassengerProfileKey = ppd.PassengerProfileKey
+JOIN Passenger p ON pmf.PassengerKey = p.PassengerKey
+JOIN FareBasis fb ON pmf.FareBasisKey = fb.FareBasisKey;
+
+--Query 3: Understanding Response to Special Fare Promotions
+--This query examines frequent flyers response to special fare promotions.
+
+sql
+Copy code
+SELECT p.PassengerName, pr.PromotionCode, pr.PromotionDescription, pr.StartDate, pr.EndDate
+FROM PassengerMilesFact pmf
+JOIN PassengerProfileDim ppd ON pmf.PassengerProfileKey = ppd.PassengerProfileKey
+JOIN Passenger p ON pmf.PassengerKey = p.PassengerKey
+JOIN Promotion pr ON pmf.PromotionKey = pr.PromotionKey;
+
+--Query 4: Analyzing Loyalty Status Proportion
+--This query calculates the proportion of frequent flyers with gold, platinum, or titanium status.
+
+SELECT ppd.FrequentFlyerTier, COUNT(*) AS CountOfPassengers
+FROM PassengerMilesFact pmf
+JOIN PassengerProfileDim ppd ON pmf.PassengerProfileKey = ppd.PassengerProfileKey
+GROUP BY ppd.FrequentFlyerTier;

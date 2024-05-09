@@ -1,0 +1,179 @@
+CREATE TABLE Dim_Flight (
+    FlightKey NUMBER PRIMARY KEY,
+    DepartureAirport VARCHAR2(100),
+    ArrivalAirport VARCHAR2(100),
+    DepartureTime TIMESTAMP,
+    ArrivalTime TIMESTAMP,
+    ActualDepartureTime TIMESTAMP,
+    ActualArrivalTime TIMESTAMP,
+    FOREIGN KEY (DepartureAirport) REFERENCES Dim_Airport(AirportKey),
+    FOREIGN KEY (ArrivalAirport) REFERENCES Dim_Airport(AirportKey)
+);
+
+CREATE TABLE Dim_Airport (
+    AirportKey VARCHAR2(100) PRIMARY KEY,
+    AirportCode NUMBER,
+    AirportnName VARCHAR2(100),
+    LocationKey NUMBER,
+    FOREIGN KEY (LocationKey) REFERENCES Dim_Location(LocationKey)
+);
+
+CREATE TABLE Dim_Class (
+    ClassKey NUMBER PRIMARY KEY,
+    Type VARCHAR2(50)
+);
+
+CREATE TABLE Dim_InteractionMethod (
+    MethodKey NUMBER PRIMARY KEY,
+    Type VARCHAR2(50)
+);
+
+CREATE TABLE Dim_CaseStatus (
+    CaseKey NUMBER PRIMARY KEY,
+    Type VARCHAR2(50),
+    Priority  VARCHAR2(50)
+);
+
+CREATE TABLE Dim_InteractionType (
+    InteractionTypeKey NUMBER PRIMARY KEY,
+    Type VARCHAR2(50),
+    Severity VARCHAR2(50)
+);
+
+CREATE TABLE Dim_Location (
+    LocationKey NUMBER PRIMARY KEY,
+    City VARCHAR2(100),
+    Country VARCHAR2(100),
+    Latitude NUMBER,
+    Longitude NUMBER,
+    Timezone VARCHAR2(50)
+);
+
+CREATE TABLE Dim_Agent (
+    AgentKey NUMBER PRIMARY KEY,
+    NationalID VARCHAR2(50) ,
+    Name VARCHAR2(100),
+    Gender VARCHAR2(10),
+    DateOfBirth DATE,
+    ContactNumber NUMBER,
+    Nationality VARCHAR2(100),
+    Title VARCHAR2(50)
+);
+
+CREATE TABLE Dim_Client (
+    ClientKey NUMBER PRIMARY KEY,
+    PassportID VARCHAR2(50) ,
+    Name VARCHAR2(100),
+    Gender VARCHAR2(10),
+    DateOfBirth DATE,
+    ContactNumber NUMBER,
+    Nationality VARCHAR2(100)
+);
+
+CREATE TABLE Dim_Date (
+    DateKey NUMBER PRIMARY KEY,
+    "Date" DATE,
+    DayOfWeek VARCHAR2(15),
+    DayOfMonth NUMBER,
+    WeekOfMonth NUMBER,
+    WeekOfYear NUMBER,
+    Month NUMBER,
+    Quarter NUMBER,
+    Year NUMBER
+);
+
+
+CREATE TABLE Complaint_Inquiry_Fact (
+    TicketID NUMBER ,
+    ClientKey NUMBER,
+    FlightKey NUMBER,
+    DateKey NUMBER,
+    ClassKey NUMBER,
+    InteractionMethodKey NUMBER,
+    CaseStatusKey NUMBER,
+    AgentKey NUMBER,
+    InteractionTypeKey NUMBER,
+    OverallFeedback VARCHAR2(255),
+    FOREIGN KEY (ClientKey) REFERENCES Dim_Client(ClientKey),
+    FOREIGN KEY (FlightKey) REFERENCES Dim_Flight(FlightKey),
+    FOREIGN KEY (DateKey) REFERENCES Dim_Date(DateKey),
+    FOREIGN KEY (ClassKey) REFERENCES Dim_Class(ClassKey),
+    FOREIGN KEY (InteractionMethodKey) REFERENCES Dim_InteractionMethod(MethodKey),
+    FOREIGN KEY (CaseStatusKey) REFERENCES Dim_CaseStatus(CaseKey),
+    FOREIGN KEY (AgentKey) REFERENCES Dim_Agent(AgentKey),
+    FOREIGN KEY (InteractionTypeKey) REFERENCES Dim_InteractionType(InteractionTypeKey)
+);
+
+CREATE TABLE Rating_Fact (
+    TicketID NUMBER,
+    ClientKey NUMBER,
+    FlightKey NUMBER,
+    DateKey NUMBER,
+    ClassKey NUMBER,
+    InteractionMethodKey NUMBER,
+    FlightRating NUMBER,
+    ServiceRating NUMBER,
+    OverallRating NUMBER,
+    FOREIGN KEY (ClientKey) REFERENCES Dim_Client(ClientKey),
+    FOREIGN KEY (FlightKey) REFERENCES Dim_Flight(FlightKey),
+    FOREIGN KEY (DateKey) REFERENCES Dim_Date(DateKey),
+    FOREIGN KEY (ClassKey) REFERENCES Dim_Class(ClassKey),
+    FOREIGN KEY (InteractionMethodKey) REFERENCES Dim_InteractionMethod(MethodKey)
+);
+
+
+-- Queries:-
+
+SELECT 
+    Dim_InteractionMethod.Type AS Interaction_Method,
+    COUNT(*) AS Number_of_Complaints_Inquiries
+FROM 
+    Complaint_Inquiry_Fact
+JOIN 
+    Dim_InteractionMethod ON Complaint_Inquiry_Fact.InteractionMethodKey = Dim_InteractionMethod.MethodKey
+GROUP BY 
+    Dim_InteractionMethod.Type;
+
+SELECT 
+    FlightKey,
+    AVG(OverallRating) AS Average_Overall_Rating
+FROM 
+    Rating_Fact
+GROUP BY 
+    FlightKey;
+    
+ SELECT 
+    Dim_Class.Type AS Class_Type,
+    AVG(Rating_Fact.FlightRating) AS Average_Flight_Rating
+FROM 
+    Rating_Fact
+JOIN 
+    Dim_Class ON Rating_Fact.ClassKey = Dim_Class.ClassKey
+GROUP BY 
+    Dim_Class.Type;
+    
+SELECT 
+    Dim_Flight.FlightKey,
+    AVG(Rating_Fact.ServiceRating) AS Average_Service_Rating
+FROM 
+    Rating_Fact
+JOIN 
+    Dim_Flight ON Rating_Fact.FlightKey = Dim_Flight.FlightKey
+GROUP BY 
+    Dim_Flight.FlightKey;
+
+
+SELECT 
+    Dim_Flight.DepartureAirport,
+    Dim_Flight.ArrivalAirport,
+    COUNT(*) AS Number_of_Complaints_Inquiries
+FROM 
+    Complaint_Inquiry_Fact
+JOIN 
+    Dim_Flight ON Complaint_Inquiry_Fact.FlightKey = Dim_Flight.FlightKey
+GROUP BY 
+    Dim_Flight.DepartureAirport, Dim_Flight.ArrivalAirport
+ORDER BY 
+    Number_of_Complaints_Inquiries DESC;
+
+

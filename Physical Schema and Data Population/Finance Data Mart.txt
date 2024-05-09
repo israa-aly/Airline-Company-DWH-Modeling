@@ -1,0 +1,91 @@
+-- Inserting data into the Passenger table
+INSERT INTO Passenger (PassengerKey, PassengerId, PassengerName, PassengerType, Email, PhoneNumber, LoyaltyProgramMembership)
+VALUES (1, 1001, 'John Doe', 'Adult', 'john.doe@example.com', '123456789', 'Gold');
+
+INSERT INTO Passenger (PassengerKey, PassengerId, PassengerName, PassengerType, Email, PhoneNumber, LoyaltyProgramMembership)
+VALUES (2, 1002, 'Jane Smith', 'Adult', 'jane.smith@example.com', '987654321', 'Silver');
+
+INSERT INTO Passenger (PassengerKey, PassengerId, PassengerName, PassengerType, Email, PhoneNumber, LoyaltyProgramMembership)
+VALUES (3, 1003, 'Alice Johnson', 'Child', 'alice.johnson@example.com', '567890123', NULL);
+
+
+-- Inserting data into the Flight table
+INSERT INTO Flight (FlightKey, FlightNumber, DepartureAirport, ArrivalAirport, DepartureTime, ArrivalTime)
+VALUES (1, 'FL123', 'JFK', 'LAX', TIMESTAMP '2024-04-01 08:00:00', TIMESTAMP '2024-04-01 11:00:00');
+
+INSERT INTO Flight (FlightKey, FlightNumber, DepartureAirport, ArrivalAirport, DepartureTime, ArrivalTime)
+VALUES (2, 'FL456', 'LAX', 'JFK', TIMESTAMP '2024-04-02 13:00:00', TIMESTAMP '2024-04-02 16:00:00');
+
+
+-- Inserting data into the Aircraft table
+INSERT INTO Aircraft (AircraftKey, AircraftNumber, AircraftType, Manufacturer, Model)
+VALUES (1, 123456, 'Boeing 737', 'Boeing', '737-800');
+
+INSERT INTO Aircraft (AircraftKey, AircraftNumber, AircraftType, Manufacturer, Model)
+VALUES (2, 654321, 'Airbus A320', 'Airbus', 'A320neo');
+
+
+-- Inserting data into the FareBasis table
+INSERT INTO FareBasis (FareBasisKey, FareBasisCode, FareType, Restrictions)
+VALUES (1, 'FB001', 'Regular', 'None');
+
+INSERT INTO FareBasis (FareBasisKey, FareBasisCode, FareType, Restrictions)
+VALUES (2, 'FB002', 'Discount', 'Non-refundable');
+
+
+-- Inserting data into the PaymentMethod table
+INSERT INTO PaymentMethod (PaymentMethodKey, PaymentMethodCode, PaymentMethod, PaymentStatus)
+VALUES (1, 101, 'Credit Card', 'Approved');
+
+INSERT INTO PaymentMethod (PaymentMethodKey, PaymentMethodCode, PaymentMethod, PaymentStatus)
+VALUES (2, 102, 'Debit Card', 'Pending');
+
+
+-- Inserting data into the Promotion table
+INSERT INTO Promotion (PromotionKey, PromotionCode, PromotionDescription, StartDate, EndDate)
+VALUES (1, 'PROMO001', 'Spring Sale', TO_DATE('2022-03-15', 'YYYY-MM-DD'), TO_DATE('2022-04-15', 'YYYY-MM-DD'));
+
+INSERT INTO Promotion (PromotionKey, PromotionCode, PromotionDescription, StartDate, EndDate)
+VALUES (2, 'PROMO002', 'Summer Discount', TO_DATE('2022-06-01', 'YYYY-MM-DD'), TO_DATE('2022-07-01', 'YYYY-MM-DD'));
+
+
+-- Inserting data into the BookingChannel table
+INSERT INTO BookingChannel (BookingChannelKey, BookingChannelId, BookingChannel, ChannelDescription)
+VALUES (1, 201, 'Website', 'Online booking portal');
+
+INSERT INTO BookingChannel (BookingChannelKey, BookingChannelId, BookingChannel, ChannelDescription)
+VALUES (2, 202, 'Mobile App', 'Mobile application');
+
+
+-- Inserting data into the CancellationReason table
+INSERT INTO CancellationReason (CancellationKey, CancellationId, CancellationReason, CancellationTimestamp)
+VALUES (1, 301, 'Customer Request', TIMESTAMP '2024-04-05 10:00:00');
+
+INSERT INTO CancellationReason (CancellationKey, CancellationId, CancellationReason, CancellationTimestamp)
+VALUES (2, 302, 'Flight Delay', TIMESTAMP '2024-04-10 15:00:00');
+
+
+-- Inserting data into the RefundReason table
+INSERT INTO RefundReason (RefundKey, RefundId, RefundReason)
+VALUES (1, 401, 'Customer Cancellation');
+
+INSERT INTO RefundReason (RefundKey, RefundId, RefundReason)
+VALUES (2, 402, 'Flight Cancellation');
+
+
+
+-- Inserting data into the TicketClass table
+INSERT INTO TicketClass (TicketClassKey, TicketId, TicketClass)
+VALUES (1, 501, 'Economy');
+
+INSERT INTO TicketClass (TicketClassKey, TicketId, TicketClass)
+VALUES (2, 502, 'Business');
+
+
+-- Inserting data into the ReservationFinanceFact table (Sample data, adjust as needed)
+INSERT INTO ReservationFinanceFact (ReservationID, PassengerKey, FlightKey, AircraftKey, FareBasisKey, PaymentMethodKey, PromotionKey, BookingChannelKey, CancellationKey, RefundKey, TicketClassKey, BaseFare, GovernmentTaxes, Discount, TaxesFeesCharges, AncillaryRevenue, DateKey)
+VALUES (1002, 1, 1, 1, 1, 1, 1, 1, NULL, NULL, 1, 500.00, 50.00, 100.00, 120.00, 70.00, 80);
+
+INSERT INTO ReservationFinanceFact (ReservationID, PassengerKey, FlightKey, AircraftKey, FareBasisKey, PaymentMethodKey, PromotionKey, BookingChannelKey, CancellationKey, RefundKey, TicketClassKey, BaseFare, GovernmentTaxes, Discount, TaxesFeesCharges, AncillaryRevenue, DateKey)
+VALUES (1003, 2, 2, 2, 2, 2, 2, 2, NULL, NULL, 2, 300.00, 30.00, 50.00, 50.00, 30.00, 155);
+

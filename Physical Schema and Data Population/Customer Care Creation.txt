@@ -1,0 +1,310 @@
+CREATE TABLE Dim_Flight (
+    FlightKey NUMBER PRIMARY KEY,
+    DepartureAirport VARCHAR2(100),
+    ArrivalAirport VARCHAR2(100),
+    DepartureTime TIMESTAMP,
+    ArrivalTime TIMESTAMP,
+    ActualDepartureTime TIMESTAMP,
+    ActualArrivalTime TIMESTAMP,
+    FOREIGN KEY (DepartureAirport) REFERENCES Dim_Airport(AirportKey),
+    FOREIGN KEY (ArrivalAirport) REFERENCES Dim_Airport(AirportKey)
+);
+
+CREATE TABLE Dim_Airport (
+    AirportKey VARCHAR2(100) PRIMARY KEY,
+    AirportCode NUMBER,
+    AirportnName VARCHAR2(100),
+    LocationKey NUMBER,
+    FOREIGN KEY (LocationKey) REFERENCES Dim_Location(LocationKey)
+);
+
+CREATE TABLE Dim_Class (
+    ClassKey NUMBER PRIMARY KEY,
+    Type VARCHAR2(50)
+);
+
+CREATE TABLE Dim_InteractionMethod (
+    MethodKey NUMBER PRIMARY KEY,
+    Type VARCHAR2(50)
+);
+
+CREATE TABLE Dim_CaseStatus (
+    CaseKey NUMBER PRIMARY KEY,
+    Type VARCHAR2(50),
+    Priority  VARCHAR2(50)
+);
+
+CREATE TABLE Dim_InteractionType (
+    InteractionTypeKey NUMBER PRIMARY KEY,
+    Type VARCHAR2(50),
+    Severity VARCHAR2(50)
+);
+
+CREATE TABLE Dim_Location (
+    LocationKey NUMBER PRIMARY KEY,
+    City VARCHAR2(100),
+    Country VARCHAR2(100),
+    Latitude NUMBER,
+    Longitude NUMBER,
+    Timezone VARCHAR2(50)
+);
+
+CREATE TABLE Dim_Agent (
+    AgentKey NUMBER PRIMARY KEY,
+    NationalID VARCHAR2(50) ,
+    Name VARCHAR2(100),
+    Gender VARCHAR2(10),
+    DateOfBirth DATE,
+    ContactNumber NUMBER,
+    Nationality VARCHAR2(100),
+    Title VARCHAR2(50)
+);
+
+CREATE TABLE Dim_Client (
+    ClientKey NUMBER PRIMARY KEY,
+    PassportID VARCHAR2(50) ,
+    Name VARCHAR2(100),
+    Gender VARCHAR2(10),
+    DateOfBirth DATE,
+    ContactNumber NUMBER,
+    Nationality VARCHAR2(100)
+);
+
+CREATE TABLE Dim_Date (
+    DateKey NUMBER PRIMARY KEY,
+    "Date" DATE,
+    DayOfWeek VARCHAR2(15),
+    DayOfMonth NUMBER,
+    WeekOfMonth NUMBER,
+    WeekOfYear NUMBER,
+    Month NUMBER,
+    Quarter NUMBER,
+    Year NUMBER
+);
+
+
+CREATE TABLE Complaint_Inquiry_Fact (
+    TicketID NUMBER ,
+    ClientKey NUMBER,
+    FlightKey NUMBER,
+    DateKey NUMBER,
+    ClassKey NUMBER,
+    InteractionMethodKey NUMBER,
+    CaseStatusKey NUMBER,
+    AgentKey NUMBER,
+    InteractionTypeKey NUMBER,
+    OverallFeedback VARCHAR2(255),
+    FOREIGN KEY (ClientKey) REFERENCES Dim_Client(ClientKey),
+    FOREIGN KEY (FlightKey) REFERENCES Dim_Flight(FlightKey),
+    FOREIGN KEY (DateKey) REFERENCES Dim_Date(DateKey),
+    FOREIGN KEY (ClassKey) REFERENCES Dim_Class(ClassKey),
+    FOREIGN KEY (InteractionMethodKey) REFERENCES Dim_InteractionMethod(MethodKey),
+    FOREIGN KEY (CaseStatusKey) REFERENCES Dim_CaseStatus(CaseKey),
+    FOREIGN KEY (AgentKey) REFERENCES Dim_Agent(AgentKey),
+    FOREIGN KEY (InteractionTypeKey) REFERENCES Dim_InteractionType(InteractionTypeKey)
+);
+
+CREATE TABLE Rating_Fact (
+    TicketID NUMBER,
+    ClientKey NUMBER,
+    FlightKey NUMBER,
+    DateKey NUMBER,
+    ClassKey NUMBER,
+    InteractionMethodKey NUMBER,
+    FlightRating NUMBER,
+    ServiceRating NUMBER,
+    OverallRating NUMBER,
+    FOREIGN KEY (ClientKey) REFERENCES Dim_Client(ClientKey),
+    FOREIGN KEY (FlightKey) REFERENCES Dim_Flight(FlightKey),
+    FOREIGN KEY (DateKey) REFERENCES Dim_Date(DateKey),
+    FOREIGN KEY (ClassKey) REFERENCES Dim_Class(ClassKey),
+    FOREIGN KEY (InteractionMethodKey) REFERENCES Dim_InteractionMethod(MethodKey)
+);
+
+-- Inserting dummy data into Dim_Flight table
+INSERT INTO Dim_Flight (FlightKey, DepartureAirport, ArrivalAirport, DepartureTime, ArrivalTime, ActualDepartureTime, ActualArrivalTime)
+VALUES
+    (1, 'JFK', 'LAX', TO_TIMESTAMP('2024-04-30 08:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 11:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 08:10:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 10:55:00', 'YYYY-MM-DD HH24:MI:SS'));
+
+INSERT INTO Dim_Flight (FlightKey, DepartureAirport, ArrivalAirport, DepartureTime, ArrivalTime, ActualDepartureTime, ActualArrivalTime)
+VALUES
+    (2, 'LAX', 'JFK', TO_TIMESTAMP('2024-04-30 12:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 15:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 12:05:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 14:55:00', 'YYYY-MM-DD HH24:MI:SS'));
+
+INSERT INTO Dim_Flight (FlightKey, DepartureAirport, ArrivalAirport, DepartureTime, ArrivalTime, ActualDepartureTime, ActualArrivalTime)
+VALUES
+    (3, 'SFO', 'ORD', TO_TIMESTAMP('2024-04-30 10:30:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 15:30:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 10:35:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 15:25:00', 'YYYY-MM-DD HH24:MI:SS'));
+
+INSERT INTO Dim_Flight (FlightKey, DepartureAirport, ArrivalAirport, DepartureTime, ArrivalTime, ActualDepartureTime, ActualArrivalTime)
+VALUES
+    (4, 'ORD', 'SFO', TO_TIMESTAMP('2024-04-30 16:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 21:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 16:10:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 20:55:00', 'YYYY-MM-DD HH24:MI:SS'));
+
+INSERT INTO Dim_Flight (FlightKey, DepartureAirport, ArrivalAirport, DepartureTime, ArrivalTime, ActualDepartureTime, ActualArrivalTime)
+VALUES
+    (5, 'JFK', 'LAX', TO_TIMESTAMP('2024-04-30 14:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 17:00:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 14:05:00', 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2024-04-30 16:55:00', 'YYYY-MM-DD HH24:MI:SS'));
+
+
+
+-- Inserting dummy data into Dim_Location table
+INSERT INTO Dim_Location (LocationKey, City, Country, Latitude, Longitude, Timezone)
+VALUES
+    (1, 'New York', 'United States', 40.7128, -74.0060, 'America/New_York');
+
+INSERT INTO Dim_Location (LocationKey, City, Country, Latitude, Longitude, Timezone)
+VALUES
+    (2, 'Los Angeles', 'United States', 34.0522, -118.2437, 'America/Los_Angeles');
+
+INSERT INTO Dim_Location (LocationKey, City, Country, Latitude, Longitude, Timezone)
+VALUES
+    (3, 'Chicago', 'United States', 41.8781, -87.6298, 'America/Chicago');
+
+INSERT INTO Dim_Location (LocationKey, City, Country, Latitude, Longitude, Timezone)
+VALUES
+    (4, 'San Francisco', 'United States', 37.7749, -122.4194, 'America/Los_Angeles');
+
+INSERT INTO Dim_Location (LocationKey, City, Country, Latitude, Longitude, Timezone)
+VALUES
+    (5, 'London', 'United Kingdom', 51.5074, -0.1278, 'Europe/London');
+    
+    
+-- Inserting dummy data into Dim_Airport table
+INSERT INTO Dim_Airport (AirportKey, AirportCode, AirportName, LocationKey)
+VALUES
+    ('JFK', 1234, 'John F. Kennedy International Airport', 1);
+
+INSERT INTO Dim_Airport (AirportKey, AirportCode, AirportName, LocationKey)
+VALUES
+    ('LAX', 5678, 'Los Angeles International Airport', 2);
+
+INSERT INTO Dim_Airport (AirportKey, AirportCode, AirportName, LocationKey)
+VALUES
+    ('ORD', 91011, 'O''Hare International Airport', 3);
+
+INSERT INTO Dim_Airport (AirportKey, AirportCode, AirportName, LocationKey)
+VALUES
+    ('SFO', 121314, 'San Francisco International Airport', 4);
+
+INSERT INTO Dim_Airport (AirportKey, AirportCode, AirportName, LocationKey)
+VALUES
+    ('LHR', 151617, 'London Heathrow Airport', 5);
+    
+    
+    
+-- Inserting dummy data into Dim_Class table
+INSERT INTO Dim_Class (ClassKey, Type) VALUES (1, 'Economy');
+INSERT INTO Dim_Class (ClassKey, Type) VALUES (2, 'Business');
+INSERT INTO Dim_Class (ClassKey, Type) VALUES (3, 'First');
+
+
+-- Inserting dummy data into Dim_InteractionMethod table
+INSERT INTO Dim_InteractionMethod (MethodKey, Type) VALUES (1, 'Website');
+INSERT INTO Dim_InteractionMethod (MethodKey, Type) VALUES (2, 'Application');
+INSERT INTO Dim_InteractionMethod (MethodKey, Type) VALUES (3, 'Email');
+INSERT INTO Dim_InteractionMethod (MethodKey, Type) VALUES (4, 'CallCenter');
+
+
+-- Inserting dummy data into Dim_CaseStatus table
+INSERT INTO Dim_CaseStatus (CaseKey, Type, Priority) VALUES (1, 'Finished', 'High');
+INSERT INTO Dim_CaseStatus (CaseKey, Type, Priority) VALUES (2, 'In Progress', 'Medium');
+INSERT INTO Dim_CaseStatus (CaseKey, Type, Priority) VALUES (3, 'canceled', 'Low');
+
+
+-- Inserting dummy data into Dim_InteractionType table
+INSERT INTO Dim_InteractionType (InteractionTypeKey, Type, Severity) VALUES (1, 'Complaint', 'Urgent');
+INSERT INTO Dim_InteractionType (InteractionTypeKey, Type, Severity) VALUES (2, 'Complaint', 'Normal');
+INSERT INTO Dim_InteractionType (InteractionTypeKey, Type, Severity) VALUES (3, 'Inquiry', 'Normal');
+
+
+-- Inserting dummy data into Dim_Agent table
+INSERT INTO Dim_Agent (AgentKey, NationalID, Name, Gender, DateOfBirth, ContactNumber, Nationality, Title) VALUES 
+(1, '1234567890', 'John Doe', 'Male', TO_DATE('1990-01-01', 'YYYY-MM-DD'), '1234567890', 'USA', 'Manager');
+
+INSERT INTO Dim_Agent (AgentKey, NationalID, Name, Gender, DateOfBirth, ContactNumber, Nationality, Title) VALUES 
+(2, '0987654321', 'Jane Smith', 'Female', TO_DATE('1995-05-15', 'YYYY-MM-DD'), '9876543210', 'UK', 'Supervisor');
+
+INSERT INTO Dim_Agent (AgentKey, NationalID, Name, Gender, DateOfBirth, ContactNumber, Nationality, Title) VALUES 
+(3, '1357924680', 'Michael Johnson', 'Male', TO_DATE('1985-09-20', 'YYYY-MM-DD'), '2468013579', 'Canada', 'Agent');
+
+
+
+
+-- Inserting dummy data into Dim_Date table
+INSERT INTO Dim_Date (DateKey, "Date", DayOfWeek, DayOfMonth, WeekOfMonth, WeekOfYear, Month, Quarter, Year)
+VALUES (1, TO_DATE('2024-04-01', 'YYYY-MM-DD'), 'Saturday', 1, 1, 13, 4, 2, 2024);
+
+INSERT INTO Dim_Date (DateKey, "Date", DayOfWeek, DayOfMonth, WeekOfMonth, WeekOfYear, Month, Quarter, Year)
+VALUES (2, TO_DATE('2024-04-02', 'YYYY-MM-DD'), 'Sunday', 2, 1, 13, 4, 2, 2024);
+
+INSERT INTO Dim_Date (DateKey, "Date", DayOfWeek, DayOfMonth, WeekOfMonth, WeekOfYear, Month, Quarter, Year)
+VALUES (3, TO_DATE('2024-04-03', 'YYYY-MM-DD'), 'Monday', 3, 1, 14, 4, 2, 2024);
+
+INSERT INTO Dim_Date (DateKey, "Date", DayOfWeek, DayOfMonth, WeekOfMonth, WeekOfYear, Month, Quarter, Year)
+VALUES (4, TO_DATE('2024-04-04', 'YYYY-MM-DD'), 'Tuesday', 4, 1, 14, 4, 2, 2024);
+
+INSERT INTO Dim_Date (DateKey, "Date", DayOfWeek, DayOfMonth, WeekOfMonth, WeekOfYear, Month, Quarter, Year)
+VALUES (5, TO_DATE('2024-04-05', 'YYYY-MM-DD'), 'Wednesday', 5, 1, 14, 4, 2, 2024);
+
+
+-- Inserting dummy data into DIM_PASSENGER table
+INSERT INTO SALES.DIM_PASSENGER (PASSENGERKEY, PASSPORTID, NAME, GENDER, DATEOFBIRTH, CONTACTNUMBER, NATIONALITY)
+VALUES
+    (1, 'AB123456', 'John Doe', 'Male', TO_DATE('1990-01-01', 'YYYY-MM-DD'), '1234567890', 'USA');
+
+INSERT INTO SALES.DIM_PASSENGER (PASSENGERKEY, PASSPORTID, NAME, GENDER, DATEOFBIRTH, CONTACTNUMBER, NATIONALITY)
+VALUES
+    (2, 'CD789012', 'Jane Smith', 'Female', TO_DATE('1995-05-15', 'YYYY-MM-DD'), '9876543210', 'UK');
+
+INSERT INTO SALES.DIM_PASSENGER (PASSENGERKEY, PASSPORTID, NAME, GENDER, DATEOFBIRTH, CONTACTNUMBER, NATIONALITY)
+VALUES
+    (3, 'EF345678', 'Michael Johnson', 'Male', TO_DATE('1985-09-20', 'YYYY-MM-DD'), '2468013579', 'Canada');
+
+INSERT INTO SALES.DIM_PASSENGER (PASSENGERKEY, PASSPORTID, NAME, GENDER, DATEOFBIRTH, CONTACTNUMBER, NATIONALITY)
+VALUES
+    (4, 'GH567890', 'Emily Johnson', 'Female', TO_DATE('1988-03-10', 'YYYY-MM-DD'), '5551234567', 'Australia');
+
+INSERT INTO SALES.DIM_PASSENGER (PASSENGERKEY, PASSPORTID, NAME, GENDER, DATEOFBIRTH, CONTACTNUMBER, NATIONALITY)
+VALUES
+    (5, 'IJ234567', 'David Brown', 'Male', TO_DATE('1976-07-25', 'YYYY-MM-DD'), '4449876543', 'France');
+
+INSERT INTO SALES.DIM_PASSENGER (PASSENGERKEY, PASSPORTID, NAME, GENDER, DATEOFBIRTH, CONTACTNUMBER, NATIONALITY)
+VALUES
+    (6, 'KL901234', 'Sarah Lee', 'Female', TO_DATE('1993-11-05', 'YYYY-MM-DD'), '6667890123', 'Germany');
+    
+    
+
+-- Inserting 20 dummy rows into Complaint_Inquiry_Fact table
+INSERT INTO Complaint_Inquiry_Fact (TicketID, PassengerKey, FlightKey, DateKey, ClassKey, InteractionMethodKey, CaseStatusKey, AgentKey, InteractionTypeKey, ComplaintCount)
+SELECT 
+    ROWNUM AS TicketID,
+    FLOOR(DBMS_RANDOM.VALUE(1, (SELECT COUNT(*) FROM DIM_PASSENGER))) AS PassengerKey,
+    FLOOR(DBMS_RANDOM.VALUE(1, (SELECT COUNT(*) FROM DIM_FLIGHT))) AS FlightKey,
+    FLOOR(DBMS_RANDOM.VALUE(1, (SELECT COUNT(*) FROM DIM_DATE))) AS DateKey,
+    FLOOR(DBMS_RANDOM.VALUE(1, (SELECT COUNT(*) FROM DIM_CLASS))) AS ClassKey,
+    FLOOR(DBMS_RANDOM.VALUE(1, (SELECT COUNT(*) FROM DIM_INTERACTIONMETHOD))) AS InteractionMethodKey,
+    FLOOR(DBMS_RANDOM.VALUE(1, (SELECT COUNT(*) FROM DIM_CASESTATUS))) AS CaseStatusKey,
+    FLOOR(DBMS_RANDOM.VALUE(1, (SELECT COUNT(*) FROM DIM_AGENT))) AS AgentKey,
+    FLOOR(DBMS_RANDOM.VALUE(1, (SELECT COUNT(*) FROM DIM_INTERACTIONTYPE))) AS InteractionTypeKey,
+    ROUND(DBMS_RANDOM.VALUE(1, 10)) AS ComplaintCount
+FROM DUAL
+CONNECT BY ROWNUM <= 20;
+
+
+-- Inserting dummy data into Rating_Fact table
+DECLARE
+BEGIN
+    FOR i IN 1..20 LOOP
+        INSERT INTO Rating_Fact (TicketID, PassengerKey, FlightKey, DateKey, ClassKey, InteractionMethodKey, FlightRating, ServiceRating, OverallRating)
+        VALUES
+            (i, 
+            ROUND(DBMS_RANDOM.VALUE(1, (SELECT COUNT(*) FROM Dim_Passenger))),
+            ROUND(DBMS_RANDOM.VALUE(1, (SELECT COUNT(*) FROM Dim_Flight))),
+            ROUND(DBMS_RANDOM.VALUE(1, (SELECT COUNT(*) FROM Dim_Date))),
+            ROUND(DBMS_RANDOM.VALUE(1, (SELECT COUNT(*) FROM Dim_Class))),
+            ROUND(DBMS_RANDOM.VALUE(1, (SELECT COUNT(*) FROM Dim_InteractionMethod))),
+            ROUND(DBMS_RANDOM.VALUE(1, 5)), -- Random flight rating (1-5)
+            ROUND(DBMS_RANDOM.VALUE(1, 5)), -- Random service rating (1-5)
+            ROUND(DBMS_RANDOM.VALUE(1, 5))  -- Random overall rating (1-5)
+            );
+    END LOOP;
+    COMMIT;
+END;
+/
